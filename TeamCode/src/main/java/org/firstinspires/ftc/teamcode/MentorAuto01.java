@@ -15,6 +15,9 @@ public class MentorAuto01 extends LinearOpMode {
     /**********  Timer  **********/
     private ElapsedTime runtime = new ElapsedTime();
 
+    private double forwardDirection = -1.0;
+    private double rightDirection = 1.0;
+
     /**********  IMU  **********/
     /*
      * IMU: This contains 3 different sensors in FTC on the Control Hub/Expansian Hub
@@ -65,7 +68,11 @@ public class MentorAuto01 extends LinearOpMode {
         while (opModeIsActive()) {
             vision.telemetryAprilTag();
 
-            driveTrain.drive(0.0, -0.5, 0.0); // Move forward at full speed
+            driveTrain.drive(
+                    0.0 * rightDirection, // Strafe right (pos) or left (neg)
+                    0.0 * forwardDirection,        // Move forward (pos) or backward (neg)
+                    0.6 * rightDirection           // Rotate clockwise (pos) or counterclockwise (neg)
+            ); // Move forward at full speed
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
