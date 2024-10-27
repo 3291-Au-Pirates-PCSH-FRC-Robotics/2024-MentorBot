@@ -1,79 +1,79 @@
-/* Copyright (c) 2017 FIRST. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted (subject to the limitations in the disclaimer below) provided that
- * the following conditions are met:
- *
- * Redistributions of source code must retain the above copyright notice, this list
- * of conditions and the following disclaimer.
- *
- * Redistributions in binary form must reproduce the above copyright notice, this
- * list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution.
- *
- * Neither the name of FIRST nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.
- *
- * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
- * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.Const;
+import org.firstinspires.ftc.teamcode.drivetrains.MecanumWithGyroscope;
 
-/*
- * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
- * the autonomous or the teleop period of an FTC match. The names of OpModes appear on the menu
- * of the FTC Driver Station. When a selection is made from the menu, the corresponding OpMode
- * class is instantiated on the Robot Controller and executed.
- *
- * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
- * It includes all the skeletal structure that all linear OpModes contain.
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
- */
-
-@TeleOp(name="Basic: Linear OpMode", group="Linear OpMode")
+@TeleOp(name="", group="MentorBotTeleOp")
 public class TeleOp01 extends LinearOpMode {
-
-    // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftDrive = null;
-    private DcMotor rightDrive = null;
+
+    private DcMotor frontLeftMotor = null;
+    private DcMotor frontRightMotor = null;
+    private DcMotor backLeftMotor = null;
+    private DcMotor backRightMotor = null;
+
+    /*
+     * IMU: This contains 3 different sensors in FTC on the Control Hub/Expansian Hub
+     *
+     * - Accelerameter: Used to determine the acceleration of the robot
+     * - Gyroscope: Used to determine the robot's orientation from it's start position (0 deg is
+     *              the initial start position when the robot is first turned on)
+     * - Magnetometer: Used to measure magnetic forces, especially earth's magnetism.
+     */
+    private BNO055IMU imu;
+
+    // Gyroscope: This is used to reset the gyroscope's 0 position in field centric mode
+    private double resetAngle = 0;
 
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
-        leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
-        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+        /*
+         * Used to connect the hardware wheel confirmation to the software wheel variables.
+         *
+         * hardwareMap is a variable defined in LinearOpMode which is why it can be used without
+         * defining it in this class.    It is used to retrieve the configuration for the
+         * requested value from the Control Hub/Expansion Hub.
+         *
+         * This code was written with the following ports in mind for each wheel
+         * 0 = backRightMotor
+         * 1 = backLeftMotor
+         * 2 = frontRightMotor
+         * 3 = frontLeftMotor
+         */
+        frontLeftMotor = hardwareMap.get(DcMotor.class, "FrontLeftMotorO");
+        frontRightMotor = hardwareMap.get(DcMotor.class, "FrontRightMotorR");
+        backLeftMotor = hardwareMap.get(DcMotor.class, "BackLeftMotorB");
+        backRightMotor = hardwareMap.get(DcMotor.class, "BackRightMotorG");
 
-        // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
-        // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
-        // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        leftDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightDrive.setDirection(DcMotor.Direction.FORWARD);
+        /*
+         * IMU: This is retrieving the IC2 configuration from the Control Hub/Expansion Hub
+         * for the three sensors (accelerometer, gyroscope, and magnetometer).
+         */
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+
+        /*
+         * IMU: Used to configure Gyroscope and Accelerometer
+         */
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+
+        parameters.mode             = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit        = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit        = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled   = false;
+
+        // IMU: Initialize the IMU sensors with the desired settings.
+        imu.initialize(parameters);
+
+        MecanumWithGyroscope driveTrain = new MecanumWithGyroscope(frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor, imu, telemetry);
 
         // Wait for the game to start (driver presses START)
         waitForStart();
@@ -81,33 +81,12 @@ public class TeleOp01 extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+            driveTrain.drive(gamepad1);
 
-            // Setup a variable for each drive wheel to save power level for telemetry
-            double leftPower;
-            double rightPower;
-
-            // Choose to drive using either Tank Mode, or POV Mode
-            // Comment out the method that's not used.  The default below is POV.
-
-            // POV Mode uses left stick to go forward, and right stick to turn.
-            // - This uses basic math to combine motions and is easier to drive straight.
-            double drive = -gamepad1.left_stick_y;
-            double turn  =  gamepad1.right_stick_x;
-            leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-            rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
-
-            // Tank Mode uses one stick to control each wheel.
-            // - This requires no math, but it is hard to drive forward slowly and keep straight.
-            // leftPower  = -gamepad1.left_stick_y ;
-            // rightPower = -gamepad1.right_stick_y ;
-
-            // Send calculated power to wheels
-            leftDrive.setPower(leftPower);
-            rightDrive.setPower(rightPower);
+            driveTrain.resetAngle(gamepad1);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.update();
         }
     }
