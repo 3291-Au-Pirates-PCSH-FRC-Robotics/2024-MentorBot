@@ -44,7 +44,7 @@ public class Vision {
                 // == CAMERA CALIBRATION ==
                 // If you do not manually specify calibration parameters, the SDK will attempt
                 // to load a predefined calibration for your camera.
-                //.setLensIntrinsics(578.272, 578.272, 402.145, 221.506)
+                .setLensIntrinsics(1090.68903007, 1090.68903007, 736.234708207, 353.232729217)
                 // ... these parameters are fx, fy, cx, cy.
 
                 .build();
