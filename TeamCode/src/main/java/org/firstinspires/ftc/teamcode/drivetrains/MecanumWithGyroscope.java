@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.drivetrains;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -12,27 +13,41 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.Constants;
 
 public class MecanumWithGyroscope {
+    private HardwareMap hardwareMap;
+    private BNO055IMU imu;
+    private Telemetry telemetry;
+
     private DcMotor frontLeftMotor;
     private DcMotor frontRightMotor;
     private DcMotor backLeftMotor;
     private DcMotor backRightMotor;
-    private BNO055IMU imu;
-    private Telemetry telemetry;
 
     private double resetAngle = 0;
 
     public MecanumWithGyroscope(
-            DcMotor frontLeftMotor,
-            DcMotor frontRightMotor,
-            DcMotor backLeftMotor,
-            DcMotor backRightMotor,
+            HardwareMap hardwareMap,
             BNO055IMU imu,
             Telemetry telemetry
     ) {
-        this.frontLeftMotor = frontLeftMotor;
-        this.frontRightMotor = frontRightMotor;
-        this.backLeftMotor = backLeftMotor;
-        this.backRightMotor = backRightMotor;
+        this.hardwareMap = hardwareMap;
+
+        /*
+         * Used to connect the hardware wheel confirmation to the software wheel variables.
+         *
+         * hardwareMap is a variable defined in LinearOpMode which is why it can be used without
+         * defining it in this class.    It is used to retrieve the configuration for the
+         * requested value from the Control Hub/Expansion Hub.
+         *
+         * This code was written with the following ports in mind for each wheel
+         * 0 = backRightMotor
+         * 1 = backLeftMotor
+         * 2 = frontRightMotor
+         * 3 = frontLeftMotor
+         */
+        this.frontLeftMotor = hardwareMap.get(DcMotor.class, "FrontLeftMotorO");
+        this.frontRightMotor = hardwareMap.get(DcMotor.class, "FrontRightMotorR");
+        this.backLeftMotor = hardwareMap.get(DcMotor.class, "BackLeftMotorB");
+        this.backRightMotor = hardwareMap.get(DcMotor.class, "BackRightMotorG");
 
         this.imu = imu;
 
