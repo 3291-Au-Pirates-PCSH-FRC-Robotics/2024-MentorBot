@@ -74,6 +74,46 @@ public class MecanumWithGyroscope {
     }
 
     public void drive(Gamepad gamepad1) {
+        drive(
+            gamepad1.left_stick_x,
+            gamepad1.left_stick_y,
+            gamepad1.right_stick_x,
+            gamepad1.right_bumper,
+            gamepad1.dpad_right,
+            gamepad1.dpad_left,
+            gamepad1.dpad_up,
+            gamepad1.dpad_down
+        );
+    }
+
+    public void drive( // Overloaded method for testing
+            double leftStickX,
+            double leftStickY,
+            double rightStickX
+    ) {
+        drive(
+                leftStickX,
+                leftStickY,
+                rightStickX,
+                false,
+                false,
+                false,
+                false,
+                false
+        );
+
+    }
+
+    private void drive(
+            double leftStickX,
+            double leftStickY,
+            double rightStickX,
+            boolean rightBumper,
+            boolean dpadRight,
+            boolean dpadLeft,
+            boolean dpadUp,
+            boolean dpadDown
+    ) {
         /*
          * protate is used to adjust the speed of the robot's rotation.
          *
@@ -81,7 +121,7 @@ public class MecanumWithGyroscope {
          *
          * The range of this when divided by 4 is -0.25 <= protate <= 0.25 radians
          */
-        double protate = gamepad1.right_stick_x / 4;
+        double protate = rightStickX / 4;
 
         /*
          * The total power cap should be 1, as that's the limitation of the DcMotor.  The
@@ -121,8 +161,8 @@ public class MecanumWithGyroscope {
         /*
          * Analog stick * (magnitude value between 0.5303 - 0.707)
          */
-        double stickX = gamepad1.left_stick_x * processedProtate;
-        double stickY = gamepad1.left_stick_y * processedProtate;
+        double stickX = leftStickX * processedProtate;
+        double stickY = leftStickY * processedProtate;
 
         // Is the angle of the left analog stick in radians.
         double theta    = 0;
@@ -190,20 +230,20 @@ public class MecanumWithGyroscope {
         gyroAngle = -1 * gyroAngle;
 
         //Disables gyro, sets to -Math.PI/2 so front is defined correctly
-        if( gamepad1.right_bumper ) {
+        if( rightBumper ) {
             gyroAngle = -halfPi;
         }
 
         // Fixed power linear directions in case you want to do straight lines
-        if (gamepad1.dpad_right) {
+        if (dpadRight) {
             stickX = 0.5;
-        } else if ( gamepad1.dpad_left ){
+        } else if ( dpadLeft){
             stickX = -0.5;
         }
 
-        if (gamepad1.dpad_up) {
+        if (dpadUp) {
             stickY = 0.5;
-        } else if ( gamepad1.dpad_down ) {
+        } else if ( dpadDown ) {
             stickY = -0.5;
         }
 

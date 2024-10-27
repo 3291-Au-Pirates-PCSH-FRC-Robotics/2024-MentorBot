@@ -6,22 +6,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.teamcode.drivetrains.MecanumWithGyroscope;
 import org.firstinspires.ftc.teamcode.vision.Vision;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-@TeleOp(name="", group="MentorBotTeleOp")
-public class TeleOp01 extends LinearOpMode {
+@TeleOp(name="Mentor - TeleOp 01", group="MentorBotTeleOp")
+public class MentorTeleOp01 extends LinearOpMode {
     /**********  Timer  **********/
     private ElapsedTime runtime = new ElapsedTime();
-
-    /**********  Drive Train  **********/
-    private DcMotor frontLeftMotor = null;
-    private DcMotor frontRightMotor = null;
-    private DcMotor backLeftMotor = null;
-    private DcMotor backRightMotor = null;
 
     /**********  IMU  **********/
     /*
@@ -73,8 +64,8 @@ public class TeleOp01 extends LinearOpMode {
         while (opModeIsActive()) {
             vision.telemetryAprilTag();
 
-            //driveTrain.drive(gamepad1);
-            //driveTrain.resetAngle(gamepad1);
+            driveTrain.drive(gamepad1);
+            driveTrain.resetAngle(gamepad1);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
