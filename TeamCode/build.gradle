@@ -23,6 +23,19 @@ android {
     }
 }
 
+// Roadrunner 1.0 dependencies
+repositories {
+    maven {
+        url = 'https://maven.brott.dev/'
+    }
+}
+
 dependencies {
     implementation project(':FtcRobotController')
+
+    // Roadrunner dependencies
+    implementation "com.acmerobotics.roadrunner:ftc:0.1.14"
+    implementation "com.acmerobotics.roadrunner:core:1.0.0"
+    implementation "com.acmerobotics.roadrunner:actions:1.0.0"
+    implementation "com.acmerobotics.dashboard:dashboard:0.4.16"
 }
