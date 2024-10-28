@@ -14,6 +14,9 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
+/**
+ * Vision class for handling AprilTag detection.
+ */
 public class Vision {
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
