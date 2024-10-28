@@ -24,6 +24,12 @@ public class MecanumWithGyroscope {
 
     private double resetAngle = 0;
 
+    /**
+     * Constructor for the MecanumWithGyroscope class. Initializes the motors and IMU.
+     * @param hardwareMap
+     * @param imu
+     * @param telemetry
+     */
     public MecanumWithGyroscope(
             HardwareMap hardwareMap,
             BNO055IMU imu,
@@ -73,6 +79,10 @@ public class MecanumWithGyroscope {
         this.backRightMotor.setZeroPowerBehavior(Constants.ZEROPOWERBEHAVIOR);
     }
 
+    /**
+     * Method to drive the robot using the gamepad inputs.
+     * @param gamepad1 The gamepad used for controlling the robot.
+     */
     public void drive(Gamepad gamepad1) {
         drive(
             gamepad1.left_stick_x,
@@ -86,6 +96,12 @@ public class MecanumWithGyroscope {
         );
     }
 
+    /**
+     * Overloaded method for automating the drive functionality.
+     * @param leftStickX The x-axis value from the left joystick.
+     * @param leftStickY The y-axis value from the left joystick.
+     * @param rightStickX The x-axis value from the right joystick.
+     */
     public void drive( // Overloaded method for testing
             double leftStickX,
             double leftStickY,
@@ -104,6 +120,17 @@ public class MecanumWithGyroscope {
 
     }
 
+    /**
+     * Main driving logic for the robot.
+     * @param leftStickX The x-axis value from the left joystick.
+     * @param leftStickY The y-axis value from the left joystick.
+     * @param rightStickX The x-axis value from the right joystick.
+     * @param rightBumper The state of the right bumper button.
+     * @param dpadRight The state of the dpad right button.
+     * @param dpadLeft The state of the dpad left button.
+     * @param dpadUp The state of the dpad up button.
+     * @param dpadDown The state of the dpad down button.
+     */
     private void drive(
             double leftStickX,
             double leftStickY,
@@ -321,6 +348,8 @@ public class MecanumWithGyroscope {
      * if the robot is moved after it is on, it needs to have a starting position
      *
      * EXTRA: maybe this can be automatically
+     *
+     * @param gamepad1 The gamepad used for controlling the robot.
      */
     public void resetAngle(Gamepad gamepad1) {
         if (gamepad1.a){
@@ -328,6 +357,10 @@ public class MecanumWithGyroscope {
         }
     }
 
+    /**
+     * Retrieves the current heading of the robot.
+     * @return The heading in degrees.
+     */
     public double getHeading(){
         // Axesreference.INTRINSIC = intrinsic rotations, where the axes move with the object that is rotating.
         // AxesOrder.ZYX = the order of the axes are returned.

@@ -9,6 +9,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drivetrains.MecanumWithGyroscope;
 import org.firstinspires.ftc.teamcode.vision.Vision;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+
+import java.util.List;
 
 @Autonomous(name="Mentor - Auto 01", group="MentorBotAuto")
 public class MentorAuto01 extends LinearOpMode {
@@ -66,7 +69,8 @@ public class MentorAuto01 extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            vision.telemetryAprilTag();
+            List<AprilTagDetection> currentDetections = vision.getAprilTagDetections();
+            vision.telemetryAprilTag(currentDetections);
 
             driveTrain.drive(
                     0.0 * rightDirection, // Strafe right (pos) or left (neg)

@@ -8,6 +8,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drivetrains.MecanumWithGyroscope;
 import org.firstinspires.ftc.teamcode.vision.Vision;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+
+import java.util.List;
 
 @TeleOp(name="Mentor - TeleOp 01", group="MentorBotTeleOp")
 public class MentorTeleOp01 extends LinearOpMode {
@@ -62,7 +65,8 @@ public class MentorTeleOp01 extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            vision.telemetryAprilTag();
+            List<AprilTagDetection> currentDetections = vision.getAprilTagDetections();
+            vision.telemetryAprilTag(currentDetections);
 
             driveTrain.drive(gamepad1);
             driveTrain.resetAngle(gamepad1);

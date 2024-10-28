@@ -21,12 +21,18 @@ public class Vision {
     private AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
 
+    /**
+     * Constructor for the Vision class.
+     * @param hardwareMap The hardware map for accessing robot hardware.
+     * @param telemetry The telemetry for displaying information.
+     */
     public Vision(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
     }
+
     /**
-     * Initialize the AprilTag processor.
+     * Initialize the AprilTag processor and Vision Portal.
      */
     public void initAprilTag() {
 
@@ -88,13 +94,34 @@ public class Vision {
 
     }   // end method initAprilTag()
 
+    /**
+     * Get the list of AprilTag detections.
+     * @return List of AprilTag detections.
+     */
+    public List<AprilTagDetection> getAprilTagDetections() {
+        return aprilTag.getDetections();
+    }
 
     /**
-     * Add telemetry about AprilTag detections.
+     * Find a specific AprilTag detection by ID.
+     * @param detections List of AprilTag detections.
+     * @param id ID of the AprilTag to find.
+     * @return The AprilTagDetection if found, otherwise null.
      */
-    public void telemetryAprilTag() {
+    public AprilTagDetection findAprilTag(List<AprilTagDetection> detections, int id) {
+        for (AprilTagDetection detection : detections) {
+            if (id < 0 || detection.id == id) {
+                return detection;
+            }
+        }
+        return null;
+    }
 
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+    /**
+     * Telemetry for AprilTag detections.
+     * @param currentDetections List of current AprilTag detections.
+     */
+    public void telemetryAprilTag(List<AprilTagDetection> currentDetections) {
         telemetry.addData("# AprilTags Detected", currentDetections.size());
 
         // Step through the list of detections and display info for each one.
